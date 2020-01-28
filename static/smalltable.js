@@ -83,7 +83,7 @@ let check_and_hide_action = function() {
 };
 
 let check_and_hide = function(metadata) {
-    if(metadata["RACETIME"] === metadata["CURRENTTIME"] && metadata["REMAININGTIME"] === "00:00:00") {
+    if(metadata["RACETIME"] === metadata["CURRENTTIME"] && window.rcdata.check_hide_cached_remaining === metadata["REMAININGTIME"]) {
         if(typeof window.rcdata.check_hide_time === "undefined") {
             window.rcdata.check_hide_time = Date.now();
             window.rcdata.check_hide_interval = setInterval(check_and_hide_action, 100);
@@ -94,6 +94,11 @@ let check_and_hide = function(metadata) {
         clearInterval(window.rcdata.check_hide_interval);
         delete window.rcdata.check_hide_interval;
         delete window.rcdata.check_hide_time;
+    } else {
+        window.rcdata.check_hide_cached_remaining = metadata["REMAININGTIME"];
+        if(typeof window.rcdata.check_hide_time !== "undefined") {
+            delete window.rcdata.check_hide_time;
+        }
     }
 };
 

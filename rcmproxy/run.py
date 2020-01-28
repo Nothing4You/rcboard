@@ -41,8 +41,10 @@ async def ws_backend(cb, session: aiohttp.ClientSession = None):
                     #         await ws.send_str(msg.data + '/answer')
                     # elif msg.type == aiohttp.WSMsgType.ERROR:
                     #     break
-        except Exception as e:
-            logger.error(e)
+        except aiohttp.ClientError as e:
+            logger.debug(e, exc_info=True)
+            logger.warning(e)
+            await asyncio.sleep(0.1)
 
 
 async def poll_task(type_: str, cb, session: aiohttp.ClientSession):
@@ -65,7 +67,8 @@ async def poll_task(type_: str, cb, session: aiohttp.ClientSession):
 
             except aiohttp.ClientResponseError as e:
                 pt_logger.warning("Unexpected http status code")
-                pt_logger.error(e)
+                pt_logger.debug(e, exc_info=True)
+                pt_logger.warning(e)
     except aiohttp.ClientConnectorError:
         pt_logger.warning(f"Unable to connect to upstream: http://{UPSTREAM_IP}/1/{type_}")
 
