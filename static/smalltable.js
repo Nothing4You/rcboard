@@ -66,8 +66,8 @@ let update_run_scores = function(data) {
 
 let check_and_hide_action = function() {
     let time_passed = Math.floor(Date.now() - window.rcdata.check_hide_time);
-    if(time_passed > 3000) {
-        console.log("check_and_hide_action 3s passed, clearing interval " + window.rcdata.check_hide_interval);
+    if(time_passed > 2500) {
+        console.log("check_and_hide_action 2.5s passed, clearing interval " + window.rcdata.check_hide_interval);
         clearInterval(window.rcdata.check_hide_interval);
         delete window.rcdata.check_hide_interval;
 
