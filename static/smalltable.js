@@ -66,8 +66,8 @@ let update_run_scores = function(data) {
 
 let check_and_hide_action = function() {
     let time_passed = Math.floor(Date.now() - window.rcdata.check_hide_time);
-    if(time_passed > 2500) {
-        console.log("check_and_hide_action 2.5s passed, clearing interval " + window.rcdata.check_hide_interval);
+    if(time_passed > RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL) {
+        console.log("check_and_hide_action " + RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL/1000 + "s passed, clearing interval " + window.rcdata.check_hide_interval);
         clearInterval(window.rcdata.check_hide_interval);
         delete window.rcdata.check_hide_interval;
 
@@ -75,10 +75,10 @@ let check_and_hide_action = function() {
         console.log("check_and_hide_action table hidden");
 
         setTimeout(() => {
-            console.log("check_and_hide_action 30s passed, unhiding");
+            console.log("check_and_hide_action " + RCBOARD_CHECK_AND_HIDE_CHECK_DURATION/1000 + "s passed, unhiding");
             document.querySelector("table").classList.remove("hidden");
             delete window.rcdata.check_hide_time;
-        }, 30000);
+        }, RCBOARD_CHECK_AND_HIDE_CHECK_DURATION);
     }
 };
 
