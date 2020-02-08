@@ -9,6 +9,8 @@ from .api_server import ApiServer
 
 
 UPSTREAM_IP = "127.0.0.1"
+UPSTREAM_PORT_WS = 8787
+UPSTREAM_PORT_HTTP = 80
 
 ENABLE_DUMMY = True
 ENABLE_POLL = False
@@ -31,7 +33,7 @@ async def ws_backend(cb, session: aiohttp.ClientSession = None):
 
     while True:
         try:
-            async with session.ws_connect(f"http://{UPSTREAM_IP}:8787/") as ws:
+            async with session.ws_connect(f"http://{UPSTREAM_IP}:{UPSTREAM_PORT_WS}/") as ws:
                 async for msg in ws:
                     msg: aiohttp.WSMessage
 
@@ -66,13 +68,13 @@ async def poll_task(type_: str, cb, session: aiohttp.ClientSession):
     pt_logger = logging.getLogger("rcmproxy.run.poll_task")
 
     try:
-        async with session.get(f"http://{UPSTREAM_IP}/1/{type_}") as resp:
+        async with session.get(f"http://{UPSTREAM_IP}:{UPSTREAM_PORT_HTTP}/1/{type_}") as resp:
             try:
                 resp.raise_for_status()
 
                 text = await resp.text()
                 # pt_logger.debug(text)
-                pt_logger.debug(f"Retrieving http://{UPSTREAM_IP}/1/{type_}")
+                pt_logger.debug(f"Retrieving http://{UPSTREAM_IP}:{UPSTREAM_PORT_HTTP}/1/{type_}")
 
                 if len(text) == 0:
                     return
@@ -85,7 +87,7 @@ async def poll_task(type_: str, cb, session: aiohttp.ClientSession):
                 pt_logger.debug(e, exc_info=True)
                 pt_logger.warning(e)
     except aiohttp.ClientConnectorError:
-        pt_logger.warning(f"Unable to connect to upstream: http://{UPSTREAM_IP}/1/{type_}")
+        pt_logger.warning(f"Unable to connect to upstream: http://{UPSTREAM_IP}:{UPSTREAM_PORT_HTTP}/1/{type_}")
 
 
 async def poll_backend(cb, session: aiohttp.ClientSession, interval: int = None):
