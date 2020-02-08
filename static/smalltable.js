@@ -75,10 +75,10 @@ let check_and_hide_action = function() {
         console.log("check_and_hide_action table hidden");
 
         setTimeout(() => {
-            console.log("check_and_hide_action " + RCBOARD_CHECK_AND_HIDE_CHECK_DURATION/1000 + "s passed, unhiding");
+            console.log("check_and_hide_action " + RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION/1000 + "s passed, unhiding");
             document.querySelector("table").classList.remove("hidden");
             delete window.rcdata.check_hide_time;
-        }, RCBOARD_CHECK_AND_HIDE_CHECK_DURATION);
+        }, RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION);
     }
 };
 
