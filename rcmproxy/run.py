@@ -15,6 +15,10 @@ ENABLE_POLL = False
 ENABLE_WS = False
 
 
+PROXY_LISTEN_IP = "0.0.0.0"
+PROXY_LISTEN_PORT = 5080
+
+
 logging_config()
 logger = logging.getLogger("rcmproxy.run")
 
@@ -129,7 +133,7 @@ async def main():
 
     cs = aiohttp.ClientSession(timeout=timeout)
 
-    api_server = ApiServer(host="0.0.0.0")
+    api_server = ApiServer(host=PROXY_LISTEN_IP, port=PROXY_LISTEN_PORT)
     await api_server.start()
 
     async def cb(data: str, type_: str = None):
