@@ -32,6 +32,8 @@ async def ws_backend(cb, session: aiohttp.ClientSession = None):
                     msg: aiohttp.WSMessage
 
                     if msg.type == aiohttp.WSMsgType.TEXT:
+                        ws_logger.debug("Received WSMessage of type WSMsgType.TEXT")
+                        ws_logger.debug(msg.data)
                         await cb(jmsg, type_="StreamingData")
 
                     else:
