@@ -20,6 +20,8 @@ logger = logging.getLogger("rcmproxy.run")
 
 
 async def ws_backend(cb, session: aiohttp.ClientSession = None):
+    ws_logger = logging.getLogger("rcmproxy.run.ws_backend")
+
     if session is None:
         session = aiohttp.ClientSession()
 
@@ -29,9 +31,16 @@ async def ws_backend(cb, session: aiohttp.ClientSession = None):
                 async for msg in ws:
                     msg: aiohttp.WSMessage
 
-                    logger.debug(msg)
-                    logger.debug(msg.type)
-                    logger.debug(msg.data)
+                    if msg.type == aiohttp.WSMsgType.TEXT:
+                        await cb(jmsg, type_="StreamingData")
+
+                    else:
+                        ws_logger.warning(f"Unexpexted WSMsgType: {msg.type}")
+                        ws_logger.debug(msg)
+
+                    # ws_logger.debug(msg)
+                    # ws_logger.debug(msg.type)
+                    # ws_logger.debug(msg.data)
 
                     # if msg.type == aiohttp.WSMsgType.TEXT:
                     #     if msg.data == 'close cmd':
@@ -42,8 +51,8 @@ async def ws_backend(cb, session: aiohttp.ClientSession = None):
                     # elif msg.type == aiohttp.WSMsgType.ERROR:
                     #     break
         except aiohttp.ClientError as e:
-            logger.debug(e, exc_info=True)
-            logger.warning(e)
+            ws_logger.debug(e, exc_info=True)
+            ws_logger.warning(e)
             await asyncio.sleep(0.1)
 
 
