@@ -23,18 +23,20 @@ let get_distance_to_first = function(data, pilot) {
     pilot_abstime = parseInt(pilot_abstime[1], 10) * 60 + parseInt(pilot_abstime[2], 10) + parseInt(pilot_abstime[3], 10)/1000;
 
     let laps_delta = parseInt(first["LAPS"]) - parseInt(pilot["LAPS"]);
-    let time_delta = first_abstime - pilot_abstime;
+    let time_delta = pilot_abstime - first_abstime;
 
     let result = "";
 
     if (laps_delta > 0)
-        result += "+" + laps_delta + "R\r\n";
+        return "+" + laps_delta + "R";
+
+    if (laps_delta < 0)
+        return laps_delta + "R";
 
     if (time_delta > 0)
-        result += "+";
-    result += time_delta.toFixed(2);
+        return = "+" + time_delta.toFixed(2);
 
-    return result;
+    return time_delta.toFixed(2);
 }
 
 let update_run_scores = function(data) {
