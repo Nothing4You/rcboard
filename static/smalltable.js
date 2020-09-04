@@ -1,8 +1,41 @@
 "use strict";
 
+let re_absolutetime = /^(\d{2}):(\d{2}).(\d{3})$/;
+
 let update_run_metadata = function(metadata) {
     document.getElementById("run-time-remaining").textContent = metadata["REMAININGTIME"];
 };
+
+let get_distance_to_first = function(data, pilot) {
+    // pilot is first place, no delta
+    if (pilot["INDEX"] === 1)
+        return "";
+
+    //window.rc_latest = data;
+    let first = data.find(p => p["INDEX"] === 1);
+
+    let first_abstime = re_absolutetime.exec(first["ABSOLUTTIME"]);
+    let pilot_abstime = re_absolutetime.exec(pilot["ABSOLUTTIME"]);
+    if (first_abstime === null || pilot_abstime === null) // no match?
+        return "?"
+
+    first_abstime = parseInt(first_abstime[1], 10) * 60 + parseInt(first_abstime[2], 10) + parseInt(first_abstime[3], 10)/1000;
+    pilot_abstime = parseInt(pilot_abstime[1], 10) * 60 + parseInt(pilot_abstime[2], 10) + parseInt(pilot_abstime[3], 10)/1000;
+
+    let laps_delta = parseInt(first["LAPS"]) - parseInt(pilot["LAPS"]);
+    let time_delta = first_abstime - pilot_abstime;
+
+    let result = "";
+
+    if (laps_delta > 0)
+        result += "+" + laps_delta + "R\r\n";
+
+    if (time_delta > 0)
+        result += "+";
+    result += time_delta.toFixed(2);
+
+    return result;
+}
 
 let update_run_scores = function(data) {
     let old_pilots = [].slice.call(document.querySelectorAll("tbody > tr"));
@@ -38,8 +71,28 @@ let update_run_scores = function(data) {
             p.children[2].textContent = pilot["LAPS"];
             flash_pilots[pilot["VEHICLE"]] = p;
         }
-        if(p.children[3].textContent !== pilot["LAPTIME"]) {
-            p.children[3].textContent = pilot["LAPTIME"];
+
+        if(Math.floor(Date.now() - window.rcdata.display_delta_time) > RCBOARD_LAPTIME_DELTA_CHANGE_INTERVAL) {
+            window.rcdata.display_delta_time = Date.now();
+            window.rcdata.display_delta = !window.rcdata.display_delta;
+        }
+
+        if (window.rcdata.display_delta) {
+            let pilot_distance;
+            try {
+                pilot_distance = get_distance_to_first(data, pilot);
+                //console.log("[" + pilot["INDEX"] + "] R" + pilot["LAPS"] + " " + pilot["PILOT"] + " => " + pilot_distance + " @ " + pilot["ABSOLUTTIME"]);
+            } catch(e) {
+                console.error(e);
+                pilot_distance = "E";
+            }
+            if(p.children[3].textContent !== pilot_distance) {
+                p.children[3].textContent = pilot_distance;
+            }
+        } else {
+            if(p.children[3].textContent !== pilot["LAPTIME"]) {
+                p.children[3].textContent = pilot["LAPTIME"];
+            }
         }
     }
 
@@ -105,6 +158,9 @@ let check_and_hide = function(metadata) {
 let init = function() {
     if(typeof window.rcdata === "undefined")
         window.rcdata = {};
+
+    window.rcdata.display_delta = false;
+    window.rcdata.display_delta_time = Date.now();
 
     let es = new EventSource("/sse");
     es.addEventListener("error", () => {setTimeout(init, 200);});

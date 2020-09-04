@@ -121,4 +121,5 @@ td:nth-child(3) {
 td:nth-child(4) {
     text-align: right;
     padding-right: 10px;
+    white-space: pre;
 }
