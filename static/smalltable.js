@@ -34,7 +34,7 @@ let get_distance_to_first = function(data, pilot) {
         return laps_delta + "R";
 
     if (time_delta > 0)
-        return = "+" + time_delta.toFixed(2);
+        return "+" + time_delta.toFixed(2);
 
     return time_delta.toFixed(2);
 }
