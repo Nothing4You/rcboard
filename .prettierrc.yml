@@ -1,0 +1,12 @@
+printWidth: 200
+tabWidth: 4
+semi: true
+arrowParens: avoid
+
+overrides:
+  - files:
+      - ".prettierrc.yml"
+      - ".eslintrc.yml"
+      - ".github/workflows/*.yml"
+    options:
+      tabWidth: 2

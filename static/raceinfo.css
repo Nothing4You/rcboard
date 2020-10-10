@@ -2,7 +2,7 @@ body {
     margin: 0;
     background-color: #49fb35;
 
-    font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 }
 
 div.wrapper {
@@ -18,7 +18,7 @@ div.wrapper {
 div.parallelogram {
     transform: skew(-55deg);
     position: absolute;
-    height: 50%
+    height: 50%;
 }
 
 div.parallelogram > div {

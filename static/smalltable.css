@@ -4,7 +4,7 @@ body {
     margin-top: 10px;
     margin-right: 10px;
 
-    font-family: Verdana,Geneva,sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
 }
 
 .hidden {
@@ -53,7 +53,8 @@ tbody tr > td {
 }
 */
 
-th, td {
+th,
+td {
     width: auto;
 }
 

@@ -3,7 +3,7 @@ body {
     margin: 0;
     margin-top: 10px;
 
-    font-family: Verdana,Geneva,sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
 
     display: flex;
     align-items: center;
@@ -61,7 +61,8 @@ tbody tr {
     justify-content: space-evenly;
 }
 
-th, td {
+th,
+td {
     width: auto;
 }
 
@@ -105,7 +106,8 @@ td:nth-child(1) {
     padding-left: 5px;
 }
 
-td:nth-child(1), td:nth-child(3) {
+td:nth-child(1),
+td:nth-child(3) {
     text-align: center;
 }
 
@@ -116,7 +118,9 @@ td:nth-child(3) {
     padding: 1px 5px;
 }
 
-td:nth-child(4), td:nth-child(5), td:nth-child(6) {
+td:nth-child(4),
+td:nth-child(5),
+td:nth-child(6) {
     text-align: right;
 }
 

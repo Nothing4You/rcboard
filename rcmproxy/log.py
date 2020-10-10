@@ -11,12 +11,17 @@ def logging_config():
     root_logger = logging.getLogger()
 
     stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_fmt = logging.Formatter("%(asctime)s.%(msecs)03dZ %(levelname)-8s %(name)s %(message)s", datefmt="%Y-%m-%dT%H:%M:%S")
+    stdout_fmt = logging.Formatter(
+        "%(asctime)s.%(msecs)03dZ %(levelname)-8s %(name)s %(message)s",
+        datefmt="%Y-%m-%dT%H:%M:%S",
+    )
     stdout_fmt.converter = time.gmtime
     stdout_handler.setFormatter(stdout_fmt)
     stdout_handler.setLevel(logging.INFO)
 
-    file_handler = logging.handlers.TimedRotatingFileHandler("log/rcmproxy.log", when="m", interval=30)
+    file_handler = logging.handlers.TimedRotatingFileHandler(
+        "log/rcmproxy.log", when="m", interval=30
+    )
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(stdout_fmt)
 
