@@ -1,6 +1,6 @@
 "use strict";
 
-import { RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL, RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION, RCBOARD_LAPTIME_DELTA_CHANGE_INTERVAL } from "./modules/const.js";
+import { RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL, RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION, RCBOARD_LAPTIME_DELTA_CHANGE_INTERVAL, RCBOARD_LAPTIME_DELTA_CHANGE } from "./modules/const.js";
 
 let re_absolutetime = /^(\d{2}):(\d{2}).(\d{3})$/;
 
@@ -70,12 +70,12 @@ let update_run_scores = function (data) {
             flash_pilots[pilot["VEHICLE"]] = p;
         }
 
-        if (Math.floor(Date.now() - window.rcdata.display_delta_time) > RCBOARD_LAPTIME_DELTA_CHANGE_INTERVAL) {
+        if (RCBOARD_LAPTIME_DELTA_CHANGE && Math.floor(Date.now() - window.rcdata.display_delta_time) > RCBOARD_LAPTIME_DELTA_CHANGE_INTERVAL) {
             window.rcdata.display_delta_time = Date.now();
             window.rcdata.display_delta = !window.rcdata.display_delta;
         }
 
-        if (window.rcdata.display_delta) {
+        if (!RCBOARD_LAPTIME_DELTA_CHANGE || window.rcdata.display_delta) {
             let pilot_distance;
             try {
                 pilot_distance = get_distance_to_first(data, pilot);
