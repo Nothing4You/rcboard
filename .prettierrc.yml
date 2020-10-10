@@ -8,5 +8,6 @@ overrides:
       - ".prettierrc.yml"
       - ".eslintrc.yml"
       - ".github/workflows/*.yml"
+      - ".pre-commit-config.yaml"
     options:
       tabWidth: 2
