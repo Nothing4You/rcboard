@@ -13,7 +13,6 @@ UPSTREAM_PORT_WS = 8787
 UPSTREAM_PORT_HTTP = 80
 
 ENABLE_DUMMY = True
-ENABLE_POLL = False
 ENABLE_WS = False
 
 
@@ -66,57 +65,6 @@ async def ws_backend(cb, session: aiohttp.ClientSession = None):
             await asyncio.sleep(0.1)
 
 
-async def poll_task(type_: str, cb, session: aiohttp.ClientSession):
-    pt_logger = logging.getLogger("rcmproxy.run.poll_task")
-
-    try:
-        async with session.get(
-            f"http://{UPSTREAM_IP}:{UPSTREAM_PORT_HTTP}/1/{type_}"
-        ) as resp:
-            try:
-                resp.raise_for_status()
-
-                text = await resp.text()
-                # pt_logger.debug(text)
-                pt_logger.debug(
-                    f"Retrieving http://{UPSTREAM_IP}:{UPSTREAM_PORT_HTTP}/1/{type_}"
-                )
-
-                if len(text) == 0:
-                    return
-
-                await cb(text, type_=type_)
-                # task.add_done_callback(lambda t: tasks.remove(t))
-
-            except aiohttp.ClientResponseError as e:
-                pt_logger.warning("Unexpected http status code")
-                pt_logger.debug(e, exc_info=True)
-                pt_logger.warning(e)
-    except aiohttp.ClientConnectorError:
-        pt_logger.warning(
-            f"Unable to connect to upstream: http://{UPSTREAM_IP}:{UPSTREAM_PORT_HTTP}/1/{type_}"
-        )
-
-
-async def poll_backend(cb, session: aiohttp.ClientSession, interval: int = None):
-    if interval is None:
-        interval = 0.2
-
-    tasks = []
-
-    # types = {"Info", "EventList", "StreamingData"}
-    types = {"StreamingData"}
-
-    while True:
-        for type_ in types:
-            tasks.append(poll_task(type_, cb, session))
-
-        tasks.append(asyncio.sleep(interval))
-
-        await asyncio.gather(*tasks)
-        tasks.clear()
-
-
 async def dummy_backend(cb):
     from .dummy_backend import data
 
@@ -152,9 +100,6 @@ async def main():
 
     if ENABLE_WS:
         f.append(ws_backend(cb, cs))
-
-    if ENABLE_POLL:
-        f.append(poll_backend(cb, cs))
 
     if ENABLE_DUMMY:
         f.append(dummy_backend(cb))
