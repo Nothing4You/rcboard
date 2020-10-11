@@ -1,6 +1,6 @@
 "use strict";
 
-import { RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL, RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION } from "./modules/const.js";
+import { RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION } from "./modules/const.js";
 
 let update_run_metadata = function (metadata) {
     document.getElementById("run-event-name").textContent = metadata["NAME"];
@@ -69,48 +69,39 @@ let update_run_scores = function (data) {
     });
 };
 
-let check_and_hide_action = function () {
-    let time_passed = Math.floor(Date.now() - window.rcdata.check_hide_time);
-    if (time_passed > RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL) {
-        console.log(
-            "check_and_hide_action " + RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL / 1000 + "s passed, clearing interval " + window.rcdata.check_hide_interval
-        );
-        clearInterval(window.rcdata.check_hide_interval);
-        delete window.rcdata.check_hide_interval;
-
-        document.querySelector("table").classList.remove("hidden");
-        console.log("check_and_hide_action table unhidden");
-
-        setTimeout(() => {
-            console.log("check_and_hide_action " + RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION / 1000 + "s passed, hiding");
-            document.querySelector("table").classList.add("hidden");
-            delete window.rcdata.check_hide_time;
-        }, RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION);
-    }
-};
-
 let check_and_hide = function (metadata) {
-    if (metadata["RACETIME"] === metadata["CURRENTTIME"] && window.rcdata.check_hide_cached_remaining === metadata["REMAININGTIME"]) {
-        if (typeof window.rcdata.check_hide_time === "undefined") {
-            window.rcdata.check_hide_time = Date.now();
-            window.rcdata.check_hide_interval = setInterval(check_and_hide_action, 100);
-            console.log("check_and_hide condition true, started interval " + window.rcdata.check_hide_interval);
+    // The "RACESTATE" is indicating you the state of the race. Following you will find the different states
+    // Idle : 0
+    // Started : 1
+    // Prepared : 2
+    // Interrupted : 3
+    // RaceOver : 4
+    // Finalized : 5
+    let racestate = metadata["RACESTATE"];
+    if (typeof racestate === "string") racestate = parseInt(racestate, 10);
+
+    if (racestate === 4 || racestate === 5) {
+        if (!window.rcdata.check_hide_triggered) {
+            window.rcdata.check_hide_triggered = true;
+
+            document.querySelector("table").classList.remove("hidden");
+            console.log("check_and_hide table unhidden");
+
+            setTimeout(() => {
+                console.log("check_and_hide " + RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION / 1000 + "s passed, hiding");
+                document.querySelector("table").classList.add("hidden");
+                delete window.rcdata.check_hide_time;
+            }, RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION);
         }
-    } else if (typeof window.rcdata.check_hide_time !== "undefined" && typeof window.rcdata.check_hide_interval !== "undefined") {
-        console.log("check_and_hide condition false, clearing interval " + window.rcdata.check_hide_interval);
-        clearInterval(window.rcdata.check_hide_interval);
-        delete window.rcdata.check_hide_interval;
-        delete window.rcdata.check_hide_time;
-    } else {
-        window.rcdata.check_hide_cached_remaining = metadata["REMAININGTIME"];
-        if (typeof window.rcdata.check_hide_time !== "undefined") {
-            delete window.rcdata.check_hide_time;
-        }
+    } else if (window.rcdata.check_hide_triggered) {
+        window.rcdata.check_hide_triggered = false;
     }
 };
 
 let init = function () {
     if (typeof window.rcdata === "undefined") window.rcdata = {};
+
+    window.rcdata.check_hide_triggered = false;
 
     let es = new EventSource("/sse");
     es.addEventListener("error", () => {
