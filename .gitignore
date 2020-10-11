@@ -3,3 +3,6 @@
 
 # node dependency directories
 node_modules/
+
+# env configuration file
+.env

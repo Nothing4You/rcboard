@@ -1,3 +1,4 @@
+import os
 import asyncio
 import logging
 
@@ -8,16 +9,27 @@ from .log import logging_config
 from .api_server import ApiServer
 
 
-UPSTREAM_IP = "127.0.0.1"
-UPSTREAM_PORT_WS = 8787
-UPSTREAM_PORT_HTTP = 80
+UPSTREAM_IP = (
+    "127.0.0.1"
+    if "RCBOARD_BACKEND_UPSTREAM_IP" not in os.environ
+    else os.environ["RCBOARD_BACKEND_UPSTREAM_IP"]
+)
+UPSTREAM_PORT_WS = (
+    8787
+    if "RCBOARD_BACKEND_UPSTREAM_PORT_WS" not in os.environ
+    else int(os.environ["RCBOARD_BACKEND_UPSTREAM_PORT_WS"])
+)
 
-ENABLE_DUMMY = True
-ENABLE_WS = False
-
-
-PROXY_LISTEN_IP = "0.0.0.0"
-PROXY_LISTEN_PORT = 5080
+PROXY_LISTEN_IP = (
+    "0.0.0.0"
+    if "RCBOARD_BACKEND_PROXY_LISTEN_IP" not in os.environ
+    else os.environ["RCBOARD_BACKEND_PROXY_LISTEN_IP"]
+)
+PROXY_LISTEN_PORT = (
+    5080
+    if "RCBOARD_BACKEND_PROXY_LISTEN_PORT" not in os.environ
+    else int(os.environ["RCBOARD_BACKEND_PROXY_LISTEN_PORT"])
+)
 
 
 logging_config()
@@ -62,11 +74,7 @@ async def dummy_backend(cb):
 
 
 async def main():
-    f = []
-
     timeout = aiohttp.ClientTimeout(sock_connect=5, total=30)
-
-    cs = aiohttp.ClientSession(timeout=timeout)
 
     api_server = ApiServer(host=PROXY_LISTEN_IP, port=PROXY_LISTEN_PORT)
     await api_server.start()
@@ -74,10 +82,13 @@ async def main():
     async def cb(data: str, type_: str = None):
         await api_server.distribute(data, type_)
 
-    if ENABLE_WS:
-        f.append(ws_backend(cb, cs))
+    backend = os.environ.get("RCBOARD_BACKEND", "websocket").lower()
 
-    if ENABLE_DUMMY:
-        f.append(dummy_backend(cb))
-
-    await asyncio.gather(*f)
+    if backend in ["websocket", "ws"]:
+        cs = aiohttp.ClientSession(timeout=timeout)
+        await ws_backend(cb, cs)
+    elif backend == "dummy":
+        await dummy_backend(cb)
+    else:
+        logger.error(f"unknown backend: {backend}, quitting")
+        return
