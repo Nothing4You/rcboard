@@ -1,6 +1,11 @@
 "use strict";
 
-import { RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL, RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION, RCBOARD_LAPTIME_DELTA_CHANGE, RCBOARD_LAPTIME_DELTA_CHANGE_INTERVAL } from "./modules/const.js";
+import {
+    RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL,
+    RCBOARD_CHECK_AND_HIDE_DISPLAY_DURATION,
+    RCBOARD_LAPTIME_DELTA_CHANGE,
+    RCBOARD_LAPTIME_DELTA_CHANGE_INTERVAL,
+} from "./modules/const.js";
 
 let re_absolutetime = /^(\d{2}):(\d{2}).(\d{3})$/;
 
@@ -124,7 +129,9 @@ let update_run_scores = function (data) {
 let check_and_hide_action = function () {
     let time_passed = Math.floor(Date.now() - window.rcdata.check_hide_time);
     if (time_passed > RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL) {
-        console.log("check_and_hide_action " + RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL / 1000 + "s passed, clearing interval " + window.rcdata.check_hide_interval);
+        console.log(
+            "check_and_hide_action " + RCBOARD_CHECK_AND_HIDE_CHECK_INTERVAL / 1000 + "s passed, clearing interval " + window.rcdata.check_hide_interval
+        );
         clearInterval(window.rcdata.check_hide_interval);
         delete window.rcdata.check_hide_interval;
 
