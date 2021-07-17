@@ -75,7 +75,7 @@ let update_run_scores = function (data) {
             window.rcdata.display_delta = !window.rcdata.display_delta;
         }
 
-        if (!RCBOARD_LAPTIME_DELTA_CHANGE || window.rcdata.display_delta) {
+        if (RCBOARD_LAPTIME_DELTA_CHANGE && window.rcdata.display_delta) {
             let pilot_distance;
             try {
                 pilot_distance = get_distance_to_first(data, pilot);
