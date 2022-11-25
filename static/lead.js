@@ -19,16 +19,21 @@ let show_update = function () {
 let update_lead = function (data) {
     if (window.rcdata.race_finished) return;
 
-    let p = data.find(v => v["INDEX"] === 1);
-    if (window.rcdata.best_vehicle_id !== p["VEHICLE"]) {
-        window.rcdata.best_vehicle_id = p["VEHICLE"];
-        window.rcdata.best_vehicle_time = p["BESTTIME"];
-        document.querySelector("#driver").textContent = p["PILOT"];
-        document.querySelector("#laptime").textContent = p["BESTTIME"];
+    let valid_vehicles = data.filter(v => v["BESTTIME"] !== "0.000");
+
+    if (valid_vehicles.length === 0) return;
+
+    let [lead] = valid_vehicles.sort((a, b) => (parseFloat(a["BESTTIME"]) < parseFloat(b["BESTTIME"]) ? -1 : 1));
+
+    if (window.rcdata.best_vehicle_id !== lead["VEHICLE"]) {
+        window.rcdata.best_vehicle_id = lead["VEHICLE"];
+        window.rcdata.best_vehicle_time = lead["BESTTIME"];
+        document.querySelector("#driver").textContent = lead["PILOT"];
+        document.querySelector("#laptime").textContent = lead["BESTTIME"];
         show_update();
-    } else if (window.rcdata.best_vehicle_time !== p["BESTTIME"]) {
-        window.rcdata.best_vehicle_time = p["BESTTIME"];
-        document.querySelector("#laptime").textContent = p["BESTTIME"];
+    } else if (window.rcdata.best_vehicle_time !== lead["BESTTIME"]) {
+        window.rcdata.best_vehicle_time = lead["BESTTIME"];
+        document.querySelector("#laptime").textContent = lead["BESTTIME"];
         show_update();
     }
 };
