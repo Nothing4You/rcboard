@@ -43,17 +43,40 @@ div.top.inner.smalltable {
     border-left: 5px solid red;
 }
 
-div.bottom {
+div.bottom.outer {
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding-top: 10px;
     padding-bottom: 5px;
     border-top: 5px solid red;
-    height: 60px;
+    height: 70px;
 }
 
+div.bottom.inner {
+    display: inline-block;
+    position: absolute;
+    height: 100%;
+    padding-top: 10px;
+}
+
+div.bottom.inner.lead {
+    padding-left: 10px;
+    padding-right: 10px;
+    left: 0;
+    width: 600px;
+    border-right: 5px solid red;
+}
+
+div.bottom.inner.raceinfo {
+    right: 0;
+    left: 625px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/*
 div.bottom > iframe {
     width: 100%;
     right: 0;
 }
+*/

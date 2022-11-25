@@ -13,3 +13,6 @@ export const RCBOARD_LAPTIME_DELTA_CHANGE = false;
 // Interval for changing display of laptime vs delta to first pilot.
 // This is only relevant when the previous setting is true.
 export const RCBOARD_LAPTIME_DELTA_CHANGE_INTERVAL = 10000;
+
+// How long the a new fastest round shall be displayed.
+export const RCBOARD_LEAD_DISPLAY_DURATION = 5000;

@@ -1,0 +1,35 @@
+body {
+    background-color: #49fb35;
+    margin: 0;
+
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+.hidden {
+    display: none !important;
+}
+
+div.wrapper {
+    width: 1000px;
+    height: 60px;
+
+    position: relative;
+}
+
+div.wrapper > div {
+    top: 0;
+    background-color: #bec3c5;
+    width: auto;
+    min-width: 30%;
+    right: 40px;
+
+    -webkit-text-stroke-width: 4px;
+    -webkit-text-stroke-color: black;
+    paint-order: stroke fill;
+    font-size: x-large;
+    font-weight: bold;
+    color: white;
+
+    padding: 2px 6px;
+    display: inline-block;
+}
