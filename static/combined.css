@@ -55,7 +55,7 @@ div.bottom.outer {
 div.bottom.inner {
     display: inline-block;
     position: absolute;
-    height: 100%;
+    height: 55px;
     padding-top: 10px;
 }
 
