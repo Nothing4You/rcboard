@@ -21,7 +21,14 @@ let update_lead = function (data) {
 
     let valid_vehicles = data.filter(v => v["BESTTIME"] !== "0.000");
 
-    if (valid_vehicles.length === 0) return;
+    if (valid_vehicles.length === 0) {
+        if (window.rcdata.best_vehicle_id !== null) {
+            window.rcdata.best_vehicle_id = null;
+            window.rcdata.best_vehicle_time = null;
+        }
+
+        return;
+    }
 
     let [lead] = valid_vehicles.sort((a, b) => (parseFloat(a["BESTTIME"]) < parseFloat(b["BESTTIME"]) ? -1 : 1));
 
