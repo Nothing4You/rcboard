@@ -27,9 +27,9 @@ let get_distance_to_first = function (data, pilot) {
     let laps_delta = parseInt(first["LAPS"]) - parseInt(pilot["LAPS"]);
     let time_delta = pilot_abstime - first_abstime;
 
-    if (laps_delta > 0) return "+" + laps_delta + "R";
+    if (laps_delta > 0) return "+" + laps_delta + "L";
 
-    if (laps_delta < 0) return laps_delta + "R";
+    if (laps_delta < 0) return laps_delta + "L";
 
     if (time_delta > 0) return "+" + time_delta.toFixed(2);
 
